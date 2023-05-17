@@ -39,29 +39,30 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CorsProperties corsProperties;
-    private final AppProperties appProperties;
-    private final AuthTokenProvider tokenProvider;
-    private final CustomUserDetailsService userDetailsService;
-    private final CustomOAuth2UserService oAuth2UserService;
-    private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final CorsProperties corsProperties;    // CORS 설정 정보
+    private final AppProperties appProperties;    // Application 설정정보
+    private final AuthTokenProvider tokenProvider; // 인증 Token 을 생성하고 검증
+    private final CustomUserDetailsService userDetailsService; // User 정보 조회
+    private final CustomOAuth2UserService oAuth2UserService; // OAuth2를 통해 사용자 정보를 가져옴
+    private final TokenAccessDeniedHandler tokenAccessDeniedHandler; // 접근이 거부된 경우 처리하는 핸들러
+    private final UserRefreshTokenRepository userRefreshTokenRepository; // 사용자의 갱신 토큰을 저장하는 Repository
 
 
+    // SecurityFilterChain 빈을 생성하여 Security 설정을 구성합니다.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
+                .cors() // cors 설정 사용
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
+                .csrf().disable() // csrf 보호 비활성화
+                .formLogin().disable() // 기존 Login Form 비활성화
+                .httpBasic().disable() // 기본 HTTP 인증 비활성화
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .accessDeniedHandler(tokenAccessDeniedHandler)
+                .accessDeniedHandler(tokenAccessDeniedHandler) // 접근 거부시 핸들러
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -72,7 +73,7 @@ public class SecurityConfig {
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
-                .authorizationRequestRepository((AuthorizationRequestRepository<OAuth2AuthorizationRequest>) oAuth2AuthorizationRequestBasedOnCookieRepository())
+                .authorizationRequestRepository((AuthorizationRequestRepository<OAuth2AuthorizationRequest>) oAuth2AuthorizationRequestBasedOnCookieRepository()) // 쿠기 기반의 OAuth2 인가요청 레포지토리
                 .and()
                 .redirectionEndpoint()
                 .baseUri("/*/oauth2/code/*")
