@@ -2,10 +2,11 @@ package com.simplesrm.oauth.repository;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import com.simplesrm.util.CookieUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class OAuth2AuthorizationRequestBasedOnCookieRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
@@ -37,10 +38,10 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
         }
     }
 
-  /*  @Override
+    @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
         return this.loadAuthorizationRequest(request);
-    }*/
+    }
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {

@@ -3,10 +3,10 @@ package com.simplesrm.oauth.filter;
 import com.simplesrm.oauth.token.AuthToken;
 import com.simplesrm.oauth.token.AuthTokenProvider;
 import com.simplesrm.util.HeaderUtil;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -28,11 +28,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String tokenStr = HeaderUtil.getAccessToken(request);
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
 
-        if(token.isValidate()){
+       if(token.isValidate()){
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
 
     }

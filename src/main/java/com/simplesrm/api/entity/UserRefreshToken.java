@@ -1,9 +1,10 @@
 package com.simplesrm.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter

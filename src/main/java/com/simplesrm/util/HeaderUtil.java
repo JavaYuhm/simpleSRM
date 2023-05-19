@@ -1,6 +1,6 @@
 package com.simplesrm.util;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 public class HeaderUtil {
 

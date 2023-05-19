@@ -3,12 +3,13 @@ package com.simplesrm.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.simplesrm.oauth.entity.ProviderType;
 import com.simplesrm.oauth.entity.RoleType;
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -67,6 +68,28 @@ public class User {
     @Column(name = "MODIFIED_AT")
     @NotNull
     private LocalDateTime modifiedAt;
+
+    public void createLocalUser(
+            @NotNull String userId,
+            @NotNull String username,
+            @NotNull String email,
+            @NotNull String password,
+            @NotNull LocalDateTime createdAt,
+            @NotNull LocalDateTime modifiedAt
+    ) {
+
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.emailVerifiedYn = "N";
+        this.profileImageUrl = "NO_URL";
+        this.providerType = ProviderType.LOCAL;
+        this.roleType = RoleType.USER;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+
+    }
 
     public User(
             @NotNull String userId,

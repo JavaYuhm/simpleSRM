@@ -2,10 +2,10 @@ package com.simplesrm.oauth.handler;
 
 import com.simplesrm.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.simplesrm.util.CookieUtil;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 import static com.simplesrm.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+
 
 @Component
 @RequiredArgsConstructor

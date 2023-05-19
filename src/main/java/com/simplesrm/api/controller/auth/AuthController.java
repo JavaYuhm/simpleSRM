@@ -1,28 +1,43 @@
 package com.simplesrm.api.controller.auth;
 
 import com.simplesrm.api.common.ApiResponse;
+import com.simplesrm.api.common.SignUpRequest;
 import com.simplesrm.api.entity.UserRefreshToken;
 import com.simplesrm.api.repository.UserRefreshTokenRepository;
 import com.simplesrm.config.properties.AppProperties;
+import com.simplesrm.entity.User;
+import com.simplesrm.oauth.entity.ProviderType;
 import com.simplesrm.oauth.entity.RoleType;
 import com.simplesrm.oauth.entity.UserPrincipal;
 import com.simplesrm.oauth.token.AuthToken;
 import com.simplesrm.oauth.token.AuthTokenProvider;
+import com.simplesrm.repository.UserRepository;
 import com.simplesrm.util.CookieUtil;
 import com.simplesrm.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.security.AuthProvider;
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -33,13 +48,16 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
 
+    private final UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
     @PostMapping("/login")
     public ApiResponse login(
-            HttpServletRequest request,
-            HttpServletResponse response,
             @RequestBody AuthReqModel authReqModel
     ) {
         Authentication authentication = authenticationManager.authenticate(
@@ -51,7 +69,6 @@ public class AuthController {
 
         String userId = authReqModel.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userId,
@@ -77,9 +94,13 @@ public class AuthController {
         }
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
+/*
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+*/
+/*
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
+*/
+        log.info("로그인 성공");
         return ApiResponse.success("token", accessToken.getToken());
     }
 
@@ -145,5 +166,36 @@ public class AuthController {
         }
 
         return ApiResponse.success("token", newAccessToken.getToken());
+    }
+
+
+    @PostMapping("/join")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new RuntimeException("Email address already in use.");
+        }
+
+        // Creating user's account
+        User user = new User();
+        user.createLocalUser(
+                signUpRequest.getId(),
+                signUpRequest.getName(),
+                signUpRequest.getEmail(),
+                signUpRequest.getPassword(),
+              LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        log.info("USER CREATE"+user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User result = userRepository.save(user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/")
+                .buildAndExpand(result.getUserId()).toUri();
+
+        return ResponseEntity.created(location)
+                .body(ApiResponse.success("User registered successfully@", ""));
     }
 }

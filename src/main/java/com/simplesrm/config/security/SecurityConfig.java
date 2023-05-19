@@ -14,17 +14,15 @@ import com.simplesrm.oauth.service.CustomOAuth2UserService;
 import com.simplesrm.oauth.service.CustomUserDetailsService;
 import com.simplesrm.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,43 +35,51 @@ import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CorsProperties corsProperties;    // CORS 설정 정보
-    private final AppProperties appProperties;    // Application 설정정보
-    private final AuthTokenProvider tokenProvider; // 인증 Token 을 생성하고 검증
-    private final CustomUserDetailsService userDetailsService; // User 정보 조회
-    private final CustomOAuth2UserService oAuth2UserService; // OAuth2를 통해 사용자 정보를 가져옴
-    private final TokenAccessDeniedHandler tokenAccessDeniedHandler; // 접근이 거부된 경우 처리하는 핸들러
-    private final UserRefreshTokenRepository userRefreshTokenRepository; // 사용자의 갱신 토큰을 저장하는 Repository
+    private final CorsProperties corsProperties;
+    private final AppProperties appProperties;
+    private final AuthTokenProvider tokenProvider;
+    private final CustomUserDetailsService userDetailsService;
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+    /*
+     * UserDetailsService 설정
+     * */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
 
 
-    // SecurityFilterChain 빈을 생성하여 Security 설정을 구성합니다.
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors() // cors 설정 사용
+                .cors()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .csrf().disable() // csrf 보호 비활성화
-                .formLogin().disable() // 기존 Login Form 비활성화
-                .httpBasic().disable() // 기본 HTTP 인증 비활성화
+                .csrf().disable()
+                .httpBasic().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .accessDeniedHandler(tokenAccessDeniedHandler) // 접근 거부시 핸들러
+                .accessDeniedHandler(tokenAccessDeniedHandler)
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .requestMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
-                .requestMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
+                .antMatchers("/api/**/join").permitAll()
+                .antMatchers("/api/**/login/**").permitAll()
+                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
-                .authorizationRequestRepository((AuthorizationRequestRepository<OAuth2AuthorizationRequest>) oAuth2AuthorizationRequestBasedOnCookieRepository()) // 쿠기 기반의 OAuth2 인가요청 레포지토리
+                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
                 .redirectionEndpoint()
                 .baseUri("/*/oauth2/code/*")
@@ -85,15 +91,15 @@ public class SecurityConfig {
                 .failureHandler(oAuth2AuthenticationFailureHandler());
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
     }
 
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder());
+    /*
+     * auth 매니저 설정
+     * */
+    @Override
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     /*
