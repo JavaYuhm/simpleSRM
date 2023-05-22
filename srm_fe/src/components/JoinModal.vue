@@ -92,7 +92,9 @@ export default {
         (body) => {
           this.setToken(body.token)
           this.isProcess = false
-          this.$emit('onCloseModal') // Emit event to close the modal
+          this.fetchUser(() => {
+            this.$emit('onCloseModal')
+          })
         },
         err => {
           if (err.response.data.status === 401 || err.response.data.status === 400) {

@@ -24,4 +24,6 @@ public class UserController {
 
         return ApiResponse.success("user", user);
     }
+
+
 }
