@@ -1,6 +1,6 @@
 package com.simplesrm.repository;
 
-import com.simplesrm.entity.User;
+import com.simplesrm.member.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

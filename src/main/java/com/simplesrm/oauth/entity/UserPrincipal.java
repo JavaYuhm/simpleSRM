@@ -1,6 +1,6 @@
 package com.simplesrm.oauth.entity;
 
-import com.simplesrm.entity.User;
+import com.simplesrm.member.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

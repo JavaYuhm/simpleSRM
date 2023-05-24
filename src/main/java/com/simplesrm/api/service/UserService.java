@@ -1,6 +1,6 @@
 package com.simplesrm.api.service;
 
-import com.simplesrm.entity.User;
+import com.simplesrm.member.User;
 import com.simplesrm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

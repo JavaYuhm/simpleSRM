@@ -1,4 +1,4 @@
-package com.simplesrm.entity;
+package com.simplesrm.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.simplesrm.oauth.entity.ProviderType;

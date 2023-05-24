@@ -2,7 +2,7 @@ package com.simplesrm.api.controller.user;
 
 import com.simplesrm.api.common.ApiResponse;
 import com.simplesrm.api.service.UserService;
-import com.simplesrm.entity.User;
+import com.simplesrm.member.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;

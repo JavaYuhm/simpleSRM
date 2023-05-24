@@ -1,6 +1,6 @@
 package com.simplesrm.oauth.service;
 
-import com.simplesrm.entity.User;
+import com.simplesrm.member.User;
 import com.simplesrm.oauth.entity.ProviderType;
 import com.simplesrm.oauth.entity.RoleType;
 import com.simplesrm.oauth.entity.UserPrincipal;
