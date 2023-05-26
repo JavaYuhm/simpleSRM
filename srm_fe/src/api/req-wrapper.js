@@ -15,17 +15,17 @@ const appendAuth = (config) => {
 }
 
 export default {
-  get (url, success, fail = err => err.response.data.message, config) {
+  get (url, success, fail, config) {
     axios.get(wrap(url), appendAuth(config))
       .then(handler.handle(success))
       .catch(fail)
   },
-  post (url, body, success, fail = err => err.response.data.message, config) {
+  post (url, body, success, fail, config) {
     axios.post(wrap(url), body, appendAuth(config))
       .then(handler.handle(success))
       .catch(fail)
   },
-  put (url, body, success, fail = err => err.response.data.message, config) {
+  put (url, body, success, fail, config) {
     axios.put(wrap(url), body, appendAuth(config))
       .then(handler.handle(success))
       .catch(fail)
@@ -51,7 +51,7 @@ export default {
       .then(handler.handle(success))
       .catch(fail)
   },
-  delete (url, success, fail = err => err.response.data.message, config) {
+  delete (url, success, fail, config) {
     axios.delete(wrap(url), appendAuth(config))
       .then(handler.handle(success))
       .catch(fail)

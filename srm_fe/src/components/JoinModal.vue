@@ -43,8 +43,9 @@
                     @keyup.enter='login'
                   )
                 .form-item
-                  p.login-error(:class='{ show: cannotSign }') 아이디 혹은 비밀번호가 입력되지 않았습니다.
-                  p.login-error(:class='{ show: isLoginFailed }') 회원가입 실패.
+                  p.join-error(:class='{ show: cannotSign }') 아이디 혹은 비밀번호가 입력되지 않았습니다.
+                  p.join-error(:class='{ show: isJoinFailed }') {{errorMessage}}
+                  p.join-error(:class='{ show: isResCheck}') 회원가입이 완료되었습니다. 가입하신 메일로 인증을 보냈습니다.
                 .form-item
                   button.btn.btn-block.btn-primary(
                     :class='{disabled: isProcess}'
@@ -68,9 +69,11 @@ export default {
       password: '',
       name: '',
       email: '',
+      errorMessage: '',
       isProcess: false,
       cannotSign: false,
-      isLoginFailed: false
+      isJoinFailed: false,
+      isResCheck: false
     }
   },
   methods: {
@@ -82,23 +85,23 @@ export default {
         this.cannotSign = true
         return
       }
-      accountApi.signUp(
+      accountApi.join(
         {
           id: this.id,
           password: this.password,
           name: this.name,
           email: this.email
         },
-        (body) => {
-          this.setToken(body.token)
-          this.isProcess = false
-          this.fetchUser(() => {
-            this.$emit('onCloseModal')
-          })
-        },
-        err => {
-          if (err.response.data.status === 401 || err.response.data.status === 400) {
-            this.isLoginFailed = true
+        (error, result) => {
+          if (error) {
+            console.log(error.message)
+            this.errorMessage = error.message
+            this.isProcess = false
+            this.isJoinFailed = true
+          } else {
+            this.setToken(result.token)
+            this.isProcess = false
+            this.isResCheck = true
           }
         }
       )
@@ -328,12 +331,12 @@ button.close {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 }
 
-.login-error {
+.join-error {
   display: none;
   color: red;
 }
 
-.login-error.show {
+.join-error.show {
   display: block;
 }
 

@@ -1,4 +1,4 @@
-package com.simplesrm.member;
+package com.simplesrm.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.simplesrm.oauth.entity.ProviderType;
@@ -14,7 +14,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -32,6 +31,7 @@ public class User {
 
     @Column(name = "USERNAME", length = 100)
     @NotNull
+    @Setter
     private String username;
 
     @JsonIgnore
@@ -45,10 +45,12 @@ public class User {
 
     @Column(name = "EMAIL_VERIFIED_YN", length = 1)
     @NotNull
+    @Setter
     private String emailVerifiedYn;
 
     @Column(name = "PROFILE_IMAGE_URL", length = 512)
     @NotNull
+    @Setter
     private String profileImageUrl;
 
     @Column(name = "PROVIDER_TYPE", length = 20)
@@ -69,13 +71,20 @@ public class User {
     @NotNull
     private LocalDateTime modifiedAt;
 
+    @Setter
+    private LocalDateTime emailVerifiedDt;
+    @Setter
+    private String emailAuthKey;
+
     public void createLocalUser(
             @NotNull String userId,
             @NotNull String username,
             @NotNull String email,
             @NotNull String password,
             @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime modifiedAt
+            @NotNull LocalDateTime modifiedAt,
+            String emailAuthKey
+
     ) {
 
         this.userId = userId;
@@ -88,6 +97,7 @@ public class User {
         this.roleType = RoleType.USER;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+        this.emailAuthKey = emailAuthKey;
 
     }
 

@@ -1,8 +1,8 @@
 package com.simplesrm.oauth.service;
 
-import com.simplesrm.member.User;
+import com.simplesrm.member.entity.User;
 import com.simplesrm.oauth.entity.UserPrincipal;
-import com.simplesrm.repository.UserRepository;
+import com.simplesrm.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

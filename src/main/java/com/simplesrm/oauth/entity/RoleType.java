@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum RoleType {
     USER("USER", "일반사용자 권한"),
     ADMIN("ADMIN", "관리자 권한"),
-    GUEST("GUEST", "게스트 권한");
+    VENDOR("VENDOR", "업체 권한");
 
     private final String code;
     private final String displayName;
@@ -19,6 +19,6 @@ public enum RoleType {
         return Arrays.stream(RoleType.values())
                 .filter(r -> r.getCode().equals(code))
                 .findAny()
-                .orElse(GUEST);
+                .orElse(VENDOR);
     }
 }

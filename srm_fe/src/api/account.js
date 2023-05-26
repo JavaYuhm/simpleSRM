@@ -1,9 +1,8 @@
 import req from './req-wrapper'
-
 const ACCOUNT_URI = {
   LOGIN: '/auth/login',
   USER: '/users',
-  JOIN: '/auth/join'
+  JOIN: '/join'
 }
 
 export default {
@@ -13,7 +12,7 @@ export default {
   getUser (success) {
     req.get(ACCOUNT_URI.USER, success)
   },
-  signUp (body, success, fail) {
+  join (body, success, fail) {
     req.post(ACCOUNT_URI.JOIN, body, success, fail)
   }
 }

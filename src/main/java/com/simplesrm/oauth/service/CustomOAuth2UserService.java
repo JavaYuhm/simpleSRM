@@ -1,13 +1,13 @@
 package com.simplesrm.oauth.service;
 
-import com.simplesrm.member.User;
+import com.simplesrm.member.entity.User;
 import com.simplesrm.oauth.entity.ProviderType;
 import com.simplesrm.oauth.entity.RoleType;
 import com.simplesrm.oauth.entity.UserPrincipal;
 import com.simplesrm.oauth.exception.OAuthProviderMissMatchException;
 import com.simplesrm.oauth.info.OAuth2UserInfo;
 import com.simplesrm.oauth.info.OAuth2UserInfoFactory;
-import com.simplesrm.repository.UserRepository;
+import com.simplesrm.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

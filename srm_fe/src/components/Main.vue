@@ -4,8 +4,6 @@
     p Welcom Simple SRM
     p(v-if='isLoggedIn') username {{ username }}
     p(v-if='isLoggedIn') role: {{ roleType }}
-
-
 </template>
 
 <script>
